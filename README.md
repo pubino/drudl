@@ -106,7 +106,20 @@ python -m pytest test_drudl.py -v
 
 ### Docker
 
+The Docker version includes a noVNC desktop for interactive CAS authentication:
+
 ```bash
+# Build the image
 docker build -t drudl .
-docker run drudl
+
+# Run with noVNC (access browser at http://localhost:6080)
+docker run -p 6080:6080 -v $(pwd)/output:/app/output drudl \
+  https://your-drupal-site.com -o /app/output
+
+# With trim file
+docker run -p 6080:6080 -v $(pwd)/output:/app/output \
+  -v $(pwd)/trim_sections.txt:/app/trim_sections.txt \
+  drudl https://your-drupal-site.com -o /app/output --trim-file /app/trim_sections.txt
 ```
+
+Open http://localhost:6080 in your browser to view and interact with the Chrome window for CAS authentication.
