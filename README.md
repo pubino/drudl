@@ -106,7 +106,17 @@ python -m pytest test_drudl.py -v
 
 ### Docker
 
-The Docker version includes a noVNC desktop for interactive CAS authentication:
+The Docker version includes a noVNC desktop for interactive CAS authentication.
+
+#### Using docker-compose
+
+Edit `docker-compose.yml` to set your target URL, then:
+
+```bash
+docker-compose up --build
+```
+
+#### Manual Docker commands
 
 ```bash
 # Build the image
