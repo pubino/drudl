@@ -96,12 +96,20 @@ class DrupalDownloader:
 
         # Use Chromium if available (e.g., in Docker)
         chromium_paths = ["/usr/bin/chromium", "/usr/bin/chromium-browser"]
+        service = None
         for path in chromium_paths:
             if os.path.exists(path):
                 options.binary_location = path
+                # Use system chromedriver
+                driver_path = "/usr/bin/chromedriver"
+                if os.path.exists(driver_path):
+                    service = Service(executable_path=driver_path)
                 break
 
-        driver = webdriver.Chrome(options=options)
+        if service:
+            driver = webdriver.Chrome(service=service, options=options)
+        else:
+            driver = webdriver.Chrome(options=options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         try:
