@@ -1,0 +1,428 @@
+#!/usr/bin/env python3
+"""
+Drupal Site Downloader with CAS Authentication Support
+
+Downloads all content from a Drupal site by enumerating the /admin/content page.
+Handles CAS authentication via interactive browser session.
+"""
+
+import argparse
+import os
+import re
+import sys
+import time
+import urllib.parse
+from pathlib import Path
+
+import html2text
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Stealth User-Agent
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+
+class DrupalDownloader:
+    def __init__(self, base_url, output_dir="downloaded_site", trim_sections=None):
+        self.base_url = base_url.rstrip("/")
+        self.output_dir = Path(output_dir)
+        self.session = requests.Session()
+        self.session.headers.update({
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+        })
+        self.downloaded_urls = set()
+        self.content_urls = []
+
+        # Configure HTML to Markdown converter
+        self.html_converter = html2text.HTML2Text()
+        self.html_converter.ignore_links = False
+        self.html_converter.ignore_images = True
+        self.html_converter.ignore_emphasis = False
+        self.html_converter.body_width = 0  # No wrapping
+
+        # Sections to trim from markdown output
+        self.sections_to_trim = trim_sections if trim_sections is not None else []
+
+    def detect_cas_auth(self, response):
+        """Detect if response indicates CAS authentication is required."""
+        # Check for CAS redirect patterns
+        if response.history:
+            for r in response.history:
+                if "cas" in r.url.lower() or "/login" in r.url.lower():
+                    return True
+
+        # Check current URL
+        if "cas" in response.url.lower():
+            return True
+
+        # Check for CAS login form indicators
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, "html.parser")
+            cas_indicators = [
+                soup.find("input", {"name": "username"}),
+                soup.find("input", {"name": "password"}),
+                soup.find("form", {"id": re.compile(r".*cas.*", re.I)}),
+                "Central Authentication Service" in response.text,
+                "cas-login" in response.text.lower(),
+            ]
+            if any(cas_indicators):
+                return True
+
+        return False
+
+    def authenticate_via_browser(self):
+        """Open browser for interactive CAS authentication."""
+        print("\n" + "="*60)
+        print("AUTHENTICATION REQUIRED")
+        print("="*60)
+        print(f"\nOpening browser for authentication...")
+        print("Please complete the login process in the browser.")
+        print("The script will continue automatically once authenticated.\n")
+
+        # Setup Chrome with visible window
+        options = Options()
+        options.add_argument(f"user-agent={USER_AGENT}")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option("useAutomationExtension", False)
+
+        driver = webdriver.Chrome(options=options)
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+
+        try:
+            # Navigate to admin content page to trigger auth
+            admin_url = f"{self.base_url}/admin/content"
+            driver.get(admin_url)
+
+            # Wait for user to complete authentication
+            # We'll know auth is complete when we're back on the Drupal site
+            print("Waiting for authentication to complete...")
+
+            max_wait = 300  # 5 minutes
+            start_time = time.time()
+
+            while time.time() - start_time < max_wait:
+                current_url = driver.current_url
+
+                # Check if we're back on the Drupal site (not on CAS)
+                if self.base_url in current_url and "cas" not in current_url.lower():
+                    # Verify we have access to admin content
+                    if "/admin/content" in current_url or driver.find_elements(By.CSS_SELECTOR, "table.views-table, .view-content"):
+                        print("\n✓ Authentication successful!")
+                        break
+
+                time.sleep(1)
+            else:
+                print("\n✗ Authentication timeout. Please try again.")
+                driver.quit()
+                sys.exit(1)
+
+            # Transfer cookies to requests session
+            for cookie in driver.get_cookies():
+                self.session.cookies.set(
+                    cookie["name"],
+                    cookie["value"],
+                    domain=cookie.get("domain", ""),
+                    path=cookie.get("path", "/")
+                )
+
+            print(f"Transferred {len(driver.get_cookies())} cookies to session.\n")
+
+        finally:
+            driver.quit()
+
+    def get_page(self, url):
+        """Fetch a page, handling authentication if needed."""
+        try:
+            response = self.session.get(url, timeout=30)
+
+            if self.detect_cas_auth(response):
+                self.authenticate_via_browser()
+                response = self.session.get(url, timeout=30)
+
+            return response
+        except requests.RequestException as e:
+            print(f"Error fetching {url}: {e}")
+            return None
+
+    def enumerate_content(self):
+        """Enumerate all content from /admin/content pages."""
+        print("Enumerating content from /admin/content...")
+
+        page = 0
+        while True:
+            if page == 0:
+                url = f"{self.base_url}/admin/content"
+            else:
+                url = f"{self.base_url}/admin/content?page={page}"
+
+            print(f"  Fetching page {page + 1}...", end=" ")
+            response = self.get_page(url)
+
+            if not response:
+                print("Failed to fetch page.")
+                if page == 0:
+                    print("\nError: Could not access /admin/content")
+                    sys.exit(1)
+                break
+
+            if response.status_code == 403:
+                print("Access denied.")
+                print("\nError: You do not have permission to access /admin/content")
+                print("The logged-in user must have 'administer content' or similar permissions.")
+                sys.exit(1)
+
+            if response.status_code != 200:
+                print(f"HTTP {response.status_code}")
+                if page == 0:
+                    print(f"\nError: Could not access /admin/content (HTTP {response.status_code})")
+                    sys.exit(1)
+                break
+
+            # Check for Drupal access denied page content
+            if "Access denied" in response.text or "You are not authorized" in response.text:
+                print("Access denied.")
+                print("\nError: You do not have permission to access /admin/content")
+                print("The logged-in user must have 'administer content' or similar permissions.")
+                sys.exit(1)
+
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            # Find content links in the admin table
+            # Drupal typically shows content in a table with links to view/edit
+            page_urls = []
+
+            # Look for content links in various Drupal admin table formats
+            for link in soup.select("td.views-field a, td.views-field-title a, .views-field-title a"):
+                href = link.get("href", "")
+                if href and not href.startswith("#"):
+                    # Skip dangerous action links
+                    dangerous_patterns = ["/edit", "/delete", "/remove", "/unpublish",
+                                         "/publish", "/clone", "/revisions", "/devel",
+                                         "/replicate", "?destination=", "op=", "action=", "confirm"]
+                    if any(pattern in href.lower() for pattern in dangerous_patterns):
+                        continue
+
+                    full_url = urllib.parse.urljoin(self.base_url, href)
+                    if full_url.startswith(self.base_url) and full_url not in self.content_urls:
+                        page_urls.append(full_url)
+                        self.content_urls.append(full_url)
+
+            # Also check for node links directly
+            for link in soup.find_all("a", href=re.compile(r"^/node/\d+$")):
+                href = link.get("href", "")
+                full_url = urllib.parse.urljoin(self.base_url, href)
+                if full_url not in self.content_urls:
+                    page_urls.append(full_url)
+                    self.content_urls.append(full_url)
+
+            print(f"Found {len(page_urls)} content items.")
+
+            if not page_urls:
+                # No more content found, might be end of pagination
+                break
+
+            # Check for next page
+            next_link = soup.select_one("a[rel='next'], li.pager-next a, .pager__item--next a")
+            if not next_link:
+                break
+
+            page += 1
+            time.sleep(0.5)  # Be nice to the server
+
+        print(f"\nTotal content items found: {len(self.content_urls)}")
+        return self.content_urls
+
+    def trim_sections(self, markdown_content):
+        """Remove unwanted sections from markdown content."""
+        lines = markdown_content.split('\n')
+        result = []
+        skip_until_next_heading = False
+        current_skip_level = 0
+
+        for line in lines:
+            # Check if this line starts a section to skip
+            should_skip = False
+            for section in self.sections_to_trim:
+                if line.strip().startswith(section):
+                    should_skip = True
+                    # Count the heading level (number of #)
+                    current_skip_level = len(section) - len(section.lstrip('#'))
+                    break
+
+            if should_skip:
+                skip_until_next_heading = True
+                continue
+
+            # Check if we've hit a new heading of same or higher level
+            if skip_until_next_heading and line.strip().startswith('#'):
+                heading_level = len(line) - len(line.lstrip('#'))
+                if heading_level <= current_skip_level:
+                    skip_until_next_heading = False
+
+            if not skip_until_next_heading:
+                result.append(line)
+
+        return '\n'.join(result)
+
+    def save_page(self, url, html_content):
+        """Convert HTML to markdown and save to output directory."""
+        # Parse URL to create file path
+        parsed = urllib.parse.urlparse(url)
+        path = parsed.path.strip("/")
+
+        if not path:
+            path = "index"
+
+        # Always save as markdown
+        path = f"{path}.md"
+
+        # Create full path
+        file_path = self.output_dir / path
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Convert HTML to markdown
+        markdown_content = self.html_converter.handle(html_content)
+
+        # Trim unwanted sections
+        markdown_content = self.trim_sections(markdown_content)
+
+        # Save content
+        file_path.write_text(markdown_content, encoding="utf-8")
+
+        return file_path
+
+    def download_content(self):
+        """Download all enumerated content."""
+        if not self.content_urls:
+            print("No content URLs to download.")
+            return
+
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        total = len(self.content_urls)
+        print(f"\nDownloading {total} pages to {self.output_dir}/\n")
+
+        spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+        failed = 0
+
+        for i, url in enumerate(self.content_urls, 1):
+            if url in self.downloaded_urls:
+                continue
+
+            # Show progress with spinner
+            spin_char = spinner[i % len(spinner)]
+            progress = int((i / total) * 30)
+            bar = '█' * progress + '░' * (30 - progress)
+            percent = int((i / total) * 100)
+
+            # Truncate URL for display
+            display_url = url.replace(self.base_url, '')
+            if len(display_url) > 40:
+                display_url = display_url[:37] + '...'
+
+            sys.stdout.write(f"\r{spin_char} [{bar}] {percent}% ({i}/{total}) {display_url:<40}")
+            sys.stdout.flush()
+
+            response = self.get_page(url)
+            if not response or response.status_code != 200:
+                failed += 1
+                continue
+
+            self.downloaded_urls.add(url)
+            file_path = self.save_page(url, response.text)
+
+            time.sleep(0.3)  # Rate limiting
+
+        # Clear progress line and show completion
+        sys.stdout.write("\r" + " " * 100 + "\r")
+        sys.stdout.flush()
+
+        print(f"✓ Download complete!")
+        print(f"  Saved: {len(self.downloaded_urls)} pages")
+        if failed:
+            print(f"  Failed: {failed} pages")
+        print(f"  Location: {self.output_dir.absolute()}")
+
+    def run(self):
+        """Main entry point."""
+        print(f"Drupal Site Downloader")
+        print(f"Target: {self.base_url}")
+        print(f"Output: {self.output_dir}")
+        print("-" * 60)
+
+        # Test connection and trigger auth if needed
+        print("\nTesting connection...")
+        response = self.get_page(self.base_url)
+
+        if not response:
+            print("Failed to connect to the site.")
+            sys.exit(1)
+
+        print("✓ Connected successfully.\n")
+
+        # Enumerate content
+        self.enumerate_content()
+
+        # Download all content
+        self.download_content()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Download Drupal site content with CAS authentication support"
+    )
+    parser.add_argument(
+        "url",
+        help="Base URL of the Drupal site (e.g., https://example.com)"
+    )
+    parser.add_argument(
+        "-o", "--output",
+        default="downloaded_site",
+        help="Output directory (default: downloaded_site)"
+    )
+    parser.add_argument(
+        "--trim-section",
+        action="append",
+        dest="trim_sections",
+        metavar="HEADER",
+        help="Markdown header to trim (e.g., '## Footer'). Can be specified multiple times."
+    )
+    parser.add_argument(
+        "--trim-file",
+        metavar="FILE",
+        help="File containing headers to trim, one per line"
+    )
+
+    args = parser.parse_args()
+
+    # Collect trim sections from arguments
+    trim_sections = []
+
+    if args.trim_sections:
+        trim_sections.extend(args.trim_sections)
+
+    if args.trim_file:
+        try:
+            with open(args.trim_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        trim_sections.append(line)
+        except FileNotFoundError:
+            print(f"Error: Trim file not found: {args.trim_file}")
+            sys.exit(1)
+
+    downloader = DrupalDownloader(args.url, args.output, trim_sections)
+    downloader.run()
+
+
+if __name__ == "__main__":
+    main()

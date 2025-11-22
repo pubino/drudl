@@ -1,0 +1,12 @@
+# Sections to trim from downloaded Drupal pages
+# One markdown header per line
+
+## Toolbar items
+### Administration menu
+### User account actions
+### Environments menu
+### Resources for Getting Help
+## Search
+## Primary tabs
+## Main Menu
+## Footer
