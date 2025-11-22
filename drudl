@@ -251,24 +251,31 @@ class DrupalDownloader:
         current_skip_level = 0
 
         for line in lines:
-            # Check if this line starts a section to skip
-            should_skip = False
-            for section in self.sections_to_trim:
-                if line.strip().startswith(section):
-                    should_skip = True
-                    # Count the heading level (number of #)
-                    current_skip_level = len(section) - len(section.lstrip('#'))
-                    break
+            stripped = line.strip()
 
-            if should_skip:
-                skip_until_next_heading = True
-                continue
+            # Check if this line is a heading
+            if stripped.startswith('#'):
+                # Extract heading level and text
+                heading_match = re.match(r'^(#+)\s*(.*)$', stripped)
+                if heading_match:
+                    hashes = heading_match.group(1)
+                    heading_text = heading_match.group(2).strip()
+                    heading_level = len(hashes)
 
-            # Check if we've hit a new heading of same or higher level
-            if skip_until_next_heading and line.strip().startswith('#'):
-                heading_level = len(line) - len(line.lstrip('#'))
-                if heading_level <= current_skip_level:
-                    skip_until_next_heading = False
+                    # Check if we should skip this section
+                    should_skip = any(
+                        section.lower() == heading_text.lower()
+                        for section in self.sections_to_trim
+                    )
+
+                    if should_skip:
+                        skip_until_next_heading = True
+                        current_skip_level = heading_level
+                        continue
+
+                    # Check if we've hit a new heading of same or higher level
+                    if skip_until_next_heading and heading_level <= current_skip_level:
+                        skip_until_next_heading = False
 
             if not skip_until_next_heading:
                 result.append(line)

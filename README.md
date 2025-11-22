@@ -56,14 +56,14 @@ python drudl https://example.com --trim-file trim_sections.txt
 
 ### Trim File Format
 
-Create a text file with one Markdown header per line:
+Create a text file with one section name per line (matches any heading level):
 
 ```
 # Comments start with hash
-## Footer
-## Main Menu
-### Navigation
-## Sidebar
+Footer
+Main Menu
+Navigation
+Sidebar
 ```
 
 ## Command-Line Options
