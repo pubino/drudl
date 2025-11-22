@@ -110,11 +110,3 @@ python -m pytest test_drudl.py -v
 docker build -t drudl .
 docker run drudl
 ```
-
-## License
-
-MIT License - see [LICENSE.md](LICENSE.md)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
