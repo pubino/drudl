@@ -10,4 +10,5 @@ services:
       - ./trim_sections.txt:/app/trim_sections.txt:ro
     environment:
       - DISPLAY=:99
+    # Create output directory before running: mkdir -p output
     command: ["https://example.com", "-o", "/app/output", "--trim-file", "/app/trim_sections.txt"]

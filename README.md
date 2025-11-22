@@ -113,6 +113,7 @@ The Docker version includes a noVNC desktop for interactive CAS authentication.
 Edit `docker-compose.yml` to set your target URL, then:
 
 ```bash
+mkdir -p output
 docker-compose up --build
 ```
 
