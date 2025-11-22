@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  drudl:
+    build: .
+    ports:
+      - "6080:6080"
+    volumes:
+      - ./output:/app/output
+      - ./trim_sections.txt:/app/trim_sections.txt:ro
+    environment:
+      - DISPLAY=:99
+    command: ["https://example.com", "-o", "/app/output", "--trim-file", "/app/trim_sections.txt"]
