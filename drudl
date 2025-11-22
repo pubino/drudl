@@ -87,12 +87,19 @@ class DrupalDownloader:
         print("Please complete the login process in the browser.")
         print("The script will continue automatically once authenticated.\n")
 
-        # Setup Chrome with visible window
+        # Setup Chrome/Chromium with visible window
         options = Options()
         options.add_argument(f"user-agent={USER_AGENT}")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
+
+        # Use Chromium if available (e.g., in Docker)
+        chromium_paths = ["/usr/bin/chromium", "/usr/bin/chromium-browser"]
+        for path in chromium_paths:
+            if os.path.exists(path):
+                options.binary_location = path
+                break
 
         driver = webdriver.Chrome(options=options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
