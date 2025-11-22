@@ -126,6 +126,8 @@ class DrupalDownloader:
                 sys.exit(1)
 
             # Transfer cookies to requests session
+            # Credentials are stored in memory only (self.session.cookies)
+            # and are never persisted to disk. They are discarded when the script exits.
             for cookie in driver.get_cookies():
                 self.session.cookies.set(
                     cookie["name"],
