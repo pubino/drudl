@@ -7,6 +7,7 @@ Handles CAS authentication via interactive browser session.
 """
 
 import argparse
+import json
 import os
 import re
 import sys
@@ -40,6 +41,7 @@ class DrupalDownloader:
         })
         self.downloaded_urls = set()
         self.content_urls = []
+        self.state_file = self.output_dir / ".drudl_state.json"
 
         # Configure HTML to Markdown converter
         self.html_converter = html2text.HTML2Text()
@@ -50,6 +52,27 @@ class DrupalDownloader:
 
         # Sections to trim from markdown output
         self.sections_to_trim = trim_sections if trim_sections is not None else []
+
+    def load_state(self):
+        """Load previously downloaded URLs from state file."""
+        if self.state_file.exists():
+            try:
+                with open(self.state_file, 'r') as f:
+                    state = json.load(f)
+                    self.downloaded_urls = set(state.get('downloaded_urls', []))
+                    return len(self.downloaded_urls)
+            except (json.JSONDecodeError, IOError):
+                pass
+        return 0
+
+    def save_state(self):
+        """Save downloaded URLs to state file."""
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        with open(self.state_file, 'w') as f:
+            json.dump({
+                'downloaded_urls': list(self.downloaded_urls),
+                'base_url': self.base_url
+            }, f, indent=2)
 
     def detect_cas_auth(self, response):
         """Detect if response indicates CAS authentication is required."""
@@ -335,27 +358,37 @@ class DrupalDownloader:
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
         total = len(self.content_urls)
-        print(f"\nDownloading {total} pages to {self.output_dir}/\n")
+
+        # Calculate how many need downloading
+        to_download = [url for url in self.content_urls if url not in self.downloaded_urls]
+        skipped = total - len(to_download)
+
+        if skipped > 0:
+            print(f"\nResuming download: {skipped} already downloaded, {len(to_download)} remaining")
+
+        if not to_download:
+            print("All pages already downloaded.")
+            return
+
+        print(f"\nDownloading {len(to_download)} pages to {self.output_dir}/\n")
 
         spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
         failed = 0
+        downloaded_this_run = 0
 
-        for i, url in enumerate(self.content_urls, 1):
-            if url in self.downloaded_urls:
-                continue
-
+        for i, url in enumerate(to_download, 1):
             # Show progress with spinner
             spin_char = spinner[i % len(spinner)]
-            progress = int((i / total) * 30)
+            progress = int((i / len(to_download)) * 30)
             bar = '█' * progress + '░' * (30 - progress)
-            percent = int((i / total) * 100)
+            percent = int((i / len(to_download)) * 100)
 
             # Truncate URL for display
             display_url = url.replace(self.base_url, '')
             if len(display_url) > 40:
                 display_url = display_url[:37] + '...'
 
-            sys.stdout.write(f"\r{spin_char} [{bar}] {percent}% ({i}/{total}) {display_url:<40}")
+            sys.stdout.write(f"\r{spin_char} [{bar}] {percent}% ({i}/{len(to_download)}) {display_url:<40}")
             sys.stdout.flush()
 
             response = self.get_page(url)
@@ -365,6 +398,10 @@ class DrupalDownloader:
 
             self.downloaded_urls.add(url)
             file_path = self.save_page(url, response.text)
+            downloaded_this_run += 1
+
+            # Save state after each successful download for resume capability
+            self.save_state()
 
             time.sleep(0.3)  # Rate limiting
 
@@ -373,7 +410,8 @@ class DrupalDownloader:
         sys.stdout.flush()
 
         print(f"✓ Download complete!")
-        print(f"  Saved: {len(self.downloaded_urls)} pages")
+        print(f"  Downloaded this run: {downloaded_this_run} pages")
+        print(f"  Total saved: {len(self.downloaded_urls)} pages")
         if failed:
             print(f"  Failed: {failed} pages")
         print(f"  Location: {self.output_dir.absolute()}")
@@ -384,6 +422,11 @@ class DrupalDownloader:
         print(f"Target: {self.base_url}")
         print(f"Output: {self.output_dir}")
         print("-" * 60)
+
+        # Load previous state for resume capability
+        previous_count = self.load_state()
+        if previous_count > 0:
+            print(f"\nFound previous session: {previous_count} pages already downloaded")
 
         # Test connection and trigger auth if needed
         print("\nTesting connection...")

@@ -29,7 +29,8 @@ RUN chmod +x /entrypoint.sh
 # Expose noVNC port
 EXPOSE 6080
 
-# Set display for Chrome
+# Set display for Chrome and unbuffered Python output
 ENV DISPLAY=:99
+ENV PYTHONUNBUFFERED=1
 
 ENTRYPOINT ["/entrypoint.sh"]
