@@ -110,12 +110,24 @@ The Docker version includes a noVNC desktop for interactive CAS authentication.
 
 #### Using docker-compose
 
-Edit `docker-compose.yml` to set your target URL, then:
+1. Copy the example configuration:
+   ```bash
+   cp docker-compose.example.yml docker-compose.yml
+   ```
 
-```bash
-mkdir -p output
-docker-compose up --build
-```
+2. Edit `docker-compose.yml` to set your target URL in the `command` line
+
+3. Create output directory and run:
+   ```bash
+   mkdir -p output
+   docker-compose up --build
+   ```
+
+4. Open http://localhost:6080 in your browser to view the Chromium window
+
+5. Complete CAS authentication when prompted
+
+The download will resume automatically if interrupted. State is saved in `output/.drudl_state.json`.
 
 #### Manual Docker commands
 
@@ -124,6 +136,7 @@ docker-compose up --build
 docker build -t drudl .
 
 # Run with noVNC (access browser at http://localhost:6080)
+mkdir -p output
 docker run -p 6080:6080 -v $(pwd)/output:/app/output drudl \
   https://your-drupal-site.com -o /app/output
 
@@ -132,5 +145,3 @@ docker run -p 6080:6080 -v $(pwd)/output:/app/output \
   -v $(pwd)/trim_sections.txt:/app/trim_sections.txt \
   drudl https://your-drupal-site.com -o /app/output --trim-file /app/trim_sections.txt
 ```
-
-Open http://localhost:6080 in your browser to view and interact with the Chrome window for CAS authentication.
