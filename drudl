@@ -39,6 +39,15 @@ class DrupalDownloader:
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
         })
+
+        # Apply bypass header from environment (e.g. "X-Custom-Header: secret-value")
+        bypass_header = os.environ.get("DRUDL_BYPASS_HEADER")
+        if bypass_header:
+            if ":" in bypass_header:
+                name, _, value = bypass_header.partition(":")
+                self.session.headers[name.strip()] = value.strip()
+            else:
+                print(f"Warning: DRUDL_BYPASS_HEADER must be in 'Header-Name: value' format, ignoring.")
         self.downloaded_urls = set()
         self.content_urls = []
         self.state_file = self.output_dir / ".drudl_state.json"
@@ -430,10 +439,28 @@ class DrupalDownloader:
 
         # Test connection and trigger auth if needed
         print("\nTesting connection...")
-        response = self.get_page(self.base_url)
+        try:
+            response = self.session.get(self.base_url, timeout=30)
 
-        if not response:
-            print("Failed to connect to the site.")
+            if self.detect_cas_auth(response):
+                self.authenticate_via_browser()
+                response = self.session.get(self.base_url, timeout=30)
+        except requests.ConnectionError as e:
+            print(f"Failed to connect to the site: {e}")
+            print(f"\nPlease verify that {self.base_url} is reachable from this machine.")
+            print("If the site is behind a VPN or campus network, ensure you are connected.")
+            sys.exit(1)
+        except requests.Timeout:
+            print(f"Connection timed out after 30 seconds.")
+            print(f"\nPlease verify that {self.base_url} is reachable from this machine.")
+            sys.exit(1)
+        except requests.RequestException as e:
+            print(f"Failed to connect to the site: {e}")
+            sys.exit(1)
+
+        if not response or not response.ok:
+            status = f" (HTTP {response.status_code})" if response else ""
+            print(f"Failed to connect to the site{status}.")
             sys.exit(1)
 
         print("✓ Connected successfully.\n")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for Drupal downloader with mocks."""
 
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -198,6 +199,27 @@ class TestDrupalDownloader(unittest.TestCase):
 
             self.assertEqual(len(urls), 1)
             self.assertNotIn("https://example.com/node/1/edit", urls)
+
+
+    @patch.dict(os.environ, {"DRUDL_BYPASS_HEADER": "X-Bypass-Token: my-secret-value"})
+    def test_bypass_header_from_env(self):
+        """Test that DRUDL_BYPASS_HEADER env var sets a custom header on the session."""
+        downloader = DrupalDownloader("https://example.com", output_dir=self.temp_dir)
+        self.assertEqual(downloader.session.headers["X-Bypass-Token"], "my-secret-value")
+
+    @patch.dict(os.environ, {"DRUDL_BYPASS_HEADER": ""})
+    def test_bypass_header_empty(self):
+        """Test that empty DRUDL_BYPASS_HEADER is ignored."""
+        downloader = DrupalDownloader("https://example.com", output_dir=self.temp_dir)
+        self.assertNotIn("X-Bypass-Token", downloader.session.headers)
+
+    @patch.dict(os.environ, {}, clear=False)
+    def test_bypass_header_unset(self):
+        """Test that missing DRUDL_BYPASS_HEADER is ignored."""
+        os.environ.pop("DRUDL_BYPASS_HEADER", None)
+        downloader = DrupalDownloader("https://example.com", output_dir=self.temp_dir)
+        # Should have only the default headers
+        self.assertIn("User-Agent", downloader.session.headers)
 
 
 if __name__ == "__main__":

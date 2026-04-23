@@ -75,6 +75,23 @@ Sidebar
 | `--trim-section` | Markdown header to remove (can be used multiple times) |
 | `--trim-file` | File containing headers to trim, one per line |
 
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DRUDL_BYPASS_HEADER` | Custom HTTP header to include with all requests, in `Header-Name: value` format. Useful for Cloudflare or WAF bypass tokens. |
+
+```bash
+# CLI
+export DRUDL_BYPASS_HEADER="X-My-Header: true"
+python drudl https://example.com -o output
+
+# Docker
+docker run -e "DRUDL_BYPASS_HEADER=X-My-Header: true" -p 6080:6080 ...
+```
+
+For docker-compose, add the variable under `environment` in your `docker-compose.yml`.
+
 ## How It Works
 
 1. **Connection Test**: Verifies the site is accessible
