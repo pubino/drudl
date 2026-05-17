@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   drudl:
     build: .
@@ -10,6 +8,6 @@ services:
       - ./trim_sections.txt:/app/trim_sections.txt:ro
     environment:
       - DISPLAY=:99
-      # - DRUDL_BYPASS_HEADER=X-My-Header: true
+      # - "DRUDL_BYPASS_HEADER=X-My-Header: true"
     # Create output directory before running: mkdir -p output
     command: ["https://example.com", "-o", "/app/output", "--trim-file", "/app/trim_sections.txt"]

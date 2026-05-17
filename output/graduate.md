@@ -1,4 +1,4 @@
-# Operations Research & Financial Engineering
+# Inside ORFE Operational Resources for Everyone
 
 Off screen link: Skip to content Off screen link: Skip to search
 
@@ -6,99 +6,220 @@ Off screen link: Skip to content Off screen link: Skip to search
 
 [ ](/ "Home")
 
-[Operations Research & Financial Engineering](/ "Home")
+Operational Resources for Everyone 
 
-[ ](https://engineering.princeton.edu/)
+#  Graduate Program Administration 
 
-## Section Menu
+* [Add]()
 
-  * [Program](/graduate)
-  * [Handbook](/graduate/handbook)
-  * [Courses](/graduate/courses)
-  * [Job Placement](/graduate/job-placement)
-  * [Academic Jobs](/graduate/academic-jobs)
-  * [Travel & Expense](/graduate/travel)
-  * [Forms](/graduate/forms "Graduate Information Submission Forms")
-  * [Climate & Community](/about/community)
+##  Sections 
+
+Sections
 
 
 
-#  Graduate Program 
-
-## Ph.D.
-
-The Ph.D. is formulated to prepare students for research and teaching. The aim of the program is to provide a strong disciplinary background in one of the core areas of research in the department. The emphasis is on the theoretical foundations, mathematical models, and computational issues in practical problem solving. Current teaching and research activities include probability and stochastic processes, stochastic analysis, mathematical statistics, linear and nonlinear optimization, stochastic optimization, convex analysis, stochastic networks and queueing theory, mathematical and computational finance, and financial econometrics. Application areas of current interest to faculty include finance, energy, health, bioinformatics, and engineering problems. To learn more about the research interests of individual faculty members, please visit the [Research](/research) page.
-
-The departmental faculty are affiliated with a number of interdisciplinary programs and centers, including the [Program in Applied and Computational Mathematics](http://www.pacm.princeton.edu/), the [Bendheim Center for Finance](https://www.princeton.edu/bcf/), the [Andlinger Center for Energy and the Environment](https://www.princeton.edu/acee/), the [Princeton Environmental Institute](http://www.princeton.edu/pei/), and the [Center for Statistics and Machine Learning](https://csml.princeton.edu/). Students may combine their departmental work with courses and research opportunities offered by such programs and centers and also by other departments including Computer Science, Economics, and Mathematics. About half of PhD recipients in Operations Research & Financial Engineering accept positions in academia. See [this list of first positions of our graduating PhD students](/academics/phd/job-placement).
-
-## Curriculum
-
-In the first year of the Ph.D. program, students enroll in the 6 departmental core courses in probability, statistics, and optimization in consultation with the Department's Director of Graduate Studies, to be followed by a qualifying exam at the end of the summer. In addition, at least two advanced courses and two semesters of directed research are completed under the direction of a faculty adviser in the student's area of interest by the end of the second year in preparation for the general examination. The general examination is normally taken in the Spring of the second year of study. Usually, beyond the general examination, two to three years are needed for the completion of a suitable dissertation. Upon completion of theses studies and acceptance of the dissertation by the department, the candidate is admitted to the final public oral examination.
-
-A comprehensive guide to the ORFE Ph.D. program can be found in the [Graduate Student Handbook](/graduate/handbook) and in the [Graduate School Catalog](https://gradschool.princeton.edu/academics/fields-study/operations-research-and-financial-engineering).
-
-## Research Seminars
-
-The weekly departmental colloquium series brings distinguished researchers to the department to present their latest work. In addition, informal research seminars are organized in order to exchange information and to discuss ideas arising from the research work in progress. Students, research staff, visiting scholars, and faculty members participate in these seminars.
-
-## Application
-
-A bachelor's degree in engineering, sciences, or mathematics is normally required for admission to the graduate program. A strong mathematical background is expected for admission. The Graduate Record Examination (GRE) results will be optional (not required) for Fall 2025. Graduate students must demonstrate a level of oral proficiency in the English language sufficient to participate successfully in the various activities that comprise a graduate education, including classwork, research, research presentations, group meetings, project teamwork, and teaching undergraduates. 
-
-The following applicants are not required to submit English language test scores. **All other applicants must submit valid TOEFL, IELTS or DET scores** :
-
-  * Applicants whose primary language is English. Primary language is defined as the language that someone communicates in most frequently and in most situations when speaking, reading, and writing
-  * Applicants whose undergraduate instruction is entirely in English as certified by the institution and for whom the degree will be awarded prior to anticipated enrollment at Princeton
-  * Applicants whose graduate study was on a full-time basis for at least **two** **academic years** where instruction is entirely in English as certified by the institution.
 
 
 
-For more information see [the Graduate School's information on English Language Tests](https://gradschool.princeton.edu/admission-onboarding/prepare/required-tests#ELP).
 
-You may request an application fee waiver within the application.
+Resources, links, and reference material relevant to [Graduate Program](https://orfe.princeton.edu/graduate) administration.
 
-Chat with Current Graduate Students
+Relevant files and other data are located within the [Graduate folder of ORFE Share](/essential-capabilities/files-sharing#orfe-share), as well as the [ORFE Google Shared Drive](https://drive.google.com/drive/folders/1mDjtisRllD6GTqxfT1O31G8f6nP9hdFO?usp=sharing) and [Dropbox](https://www.dropbox.com/scl/fo/0bmvvk2gjxuypbc8uymgm/AGNtMk8ji8KJhSTomsu_flA?rlkey=v4hdh3lg4wo4f059856arqy4h&st=k7ls6hqf&dl=0).
 
-Please join a current ORFE graduate student via Zoom on the following days/time to answer your questions regarding the application process, department requirements, student life.
+## Relevant Pages
 
-**Tuesday, December 9, 2025 8:00 am EST with current ORFE Graduate Student Hosts**
+### Filters
 
-[Join the 8:00 am Zoom](https://princeton.zoom.us/j/97784088259?pwd=oCJe7QUUzSKvzvJaDMbx1gRjNAmaKV.1)
+Search
 
-OR  
-  
-**Tuesday, December 9, 2025 3:00 pm EST with current ORFE Graduate Student Hosts**
+Pages relevant to Graduate Program Administration.
 
-[Join the 3:00 pm Zoom](https://princeton.zoom.us/j/94963727154?pwd=DFBnAHa1SAI5ZKD0rBTdgk47RHltu8.1)
+[Admissions Committee Collaboration](/graduate/committee-coordination)
 
-## Financial Support
+The steps to facilitate the work of the faculty committee assigned to evaluate graduate admissions applications.
 
-The department aims to support all doctoral students requesting aid through a combination of fellowships and assistantships. All first-year Ph.D. candidates are supported by full-time fellowships, allowing students to focus on courses and providing flexibility in the choice of a research adviser. From the second year onward, students are supported by a combination of teaching assistantships, research assistantships, and fellowships. Continuation of support is recommended on the basis of satisfactory progress.
+[Calendar Synchronization & Backup](/events/calendar-sync-backup)
 
-Further [details on financial support](https://gradschool.princeton.edu/financial-support) are provided by the Graduate School.
+A description of how events are synchronized between various campus systems and ORFE's calendars and how and where that data is backed up. 
 
-## Research Groups
+[Collect Person Info & Signed Documents](/people-facilities/collect-info)
 
-The Department features several research groups that facilitate collaborations between students and faculty and provide a variety of resources for research and teaching. These include the following:
+Guides to appropriately communicate Personally Identifying Information (PII) from new personnel, as well as legally-recognized e-signatures on documents.
 
-Financial Engineering. This group is home to computers, software, and financial data feeds needed for teaching and research in financial engineering. It is a focal point for graduate students in the Ph.D. program in financial engineering and M.Fin. It also serves as a gateway to collaborative research projects with financial institutions.
+[Collect RSVPs](/events/collect-rsvps)
 
-The [Statistics](/statlab) and [Financial Econometrics](/finmetricslab) labs emphasize statistical methods in financial econometrics and risk management, computational biology, biostatistics, high-dimensional statistical learning, data-analytic modeling, longitudinal and functional data analysis, nonlinear time series, wavelets and their applications, among others. The group's primary research focuses on developing and justifying statistical methods that are used to solve problems from the frontiers of scientific research.
+Instructions for creating or reusing a Google Form to collect RSVPs for events, including setup, questions, and pre-filled links
 
-[Transportation Center](http://www.princeton.edu/~alaink/). The center conducts research on information and decision engineering technologies and how these technologies can be used to improve transportation-related decision making.
+[Coordinate Graduate Handbook Updates](/graduate/grad-handbook-updates)
 
-## Master in Finance
+An example guide to assist with coordinating with faculty, monitoring for changes, and incorporating those changes back into to the published [Graduate Handbook](https://orfe.princeton.edu/graduate/handbook).
 
-The department is a major participant in the Master in Finance (M.Fin) degree program offered through the Bendheim Center for Finance. Further information is available via the [Bendheim Center for Finance](https://bcf.princeton.edu/academic-programs/master-in-finance/).
+[Email Delivery and Access Rules](/news-communications/email-routing-access-delivery)
 
-Statistics Laboratory Research Group
+A map of email rules and permissions that describe what ORFE email mailboxes are shared and for what purpose.
 
-Oxford-Princeton Workshop
+[Generate Academic Year Event Summary](/graduate/event-summary)
 
-Wesley L. Harris Scientific Society
+A description of the [ORFE Academic Year Event Summarizer](/apps/event-summary) app that generates a summary of beginning or end-of-year events.
 
-Professor Ahmadi and Graduate Students in Bordeaux
+[Graduate Admissions Follow-up Communications Sample](/graduate/graduate-admissions-follow-communications-sample)
 
-Graduate Students Enjoying Dinner Together
+Departmental follow-up communications sample typically signed by the Director of Graduate Studies on ORFE letterhead and originated and coordinated by the Graduate Program Administrator.
 
-Professor Shkolnikov at Oxford-Princeton Conference with Colleague
+[Interview Space Booking](/graduate/interview-space)
+
+A description of how the self-service [ORFE Graduate Interview Space](https://orfe.princeton.edu/graduate/interview-space) is booked, what notifications and alerts it generates, and the general expecations around its proper use.
+
+[Lecture or Class Recording](/undergraduate/lecture-or-class-recording)
+
+AV Services provides no charge recording of lectures and classes in Registrar classrooms as indicated in the [AV Services Service Level Agreement](https://avservices.princeton.edu/av-design/service-level-agreement).
+
+[Manage People Listings](/people-facilities/manage-people-list)
+
+How to add, remove, and change People listings on the ORFE Web Site.
+
+[Post an FPO Announcement](/graduate/post-fpo-announcement)
+
+A step-by-step on how to post an FPO to the ORFE Web Site and ensure it is on public display.
+
+[Post Graduate Student CVs or Personal Web Site Links](/graduate/post-graduate-update)
+
+The department [accepts requests](https://orfe.princeton.edu/gradcv) from current ORFE graduate students to post a PDF of their CV or a link to their personal web site to the ORFE Web Site.  Use these directions to update a listing per a student request.
+
+[Prefilled Guest Reimbursement Form](/research-finance/custom-guest-reimbursement-form)
+
+Generate a link that you can send to a guest that pre-fills select fields of the reimbursement form.
+
+Requests are received as PDF email attachments sorted into the Guest Reimbursement Requests folder inside the Inbox of the **orfe-reimburse** Service Account.
+
+[Retrieve Enrollment & Graduate Reports](/graduate/create-enrollment-reports)
+
+A note about about generating reports via the [ORFE Graduate Student Database (OGSDB)](https://ogsdb.princeton.edu).
+
+[Send Email to Current Graduate Students](/graduate/send-email-current-graduate-students)
+
+Check with [the Graduate Program Administrator](https://orfe.princeton.edu/people/administrative-staff) or DGS, then select an email method.
+
+[Taking & Displaying Photos](/news-communications/take-display-photos)
+
+A guide on taking and transferring photos of students, faculty, staff, and others, and what to consider before displaying them publicly.
+
+[Update Ph.D. Job Placement](/graduate/update-phd-job-placement)
+
+Update the complete list of Employer and First Position Title for each graduate student who successfully completes their program of study.
+
+[Use ORFE Meeting Spaces](/people-facilities/use-orfe-meeting-spaces)
+
+An overview of the capabilities of various ORFE spaces in Sherrerd Hall and how to use them for meetings and events.
+
+## Links in Support of Graduate Students
+
+### Filters
+
+Search
+
+Links to Graduate support resources hosted elsewhere.
+
+[Graduate & Undergraduate Student Printing](https://kb.princeton.edu/8329)
+
+Send the document as a PDF to either [[email protected]](/cdn-cgi/l/email-protection#e393829493918a8d97a393918a8d8086978c8dcd868796) (for Black & White) or [[email protected]](/cdn-cgi/l/email-protection#cfbfaeb8bfbda6a1bbaca0a3a0bd8fbfbda6a1acaabba0a1e1aaabba) (for Color) and retrieve it from [a public printer](https://kb.princeton.edu/KB0010334) anywhere on campus; ORFE's printer is in 108 - Sherrerd Hall.  The nearest printers accessible to undergraduates are in the EQUAD Café and 203 - Carl Fields Center open spaces.  Anyone may also plug a device directly into a printer located in either 004 or 221 - Sherrerd Hall.
+
+[Graduate IT Links](https://orfe.princeton.edu/gradit)
+
+The Graduate IT Links page is maintained by the department's Manager of Information Technologies and provided to new and incoming graduate students to summarize answers to the most common resource-related concerns and questions.
+
+[ORFE Web Site](https://orfe.princeton.edu)
+
+Use the ORFE Web Site to have speakers [Upload Slides](https://orfe.princeton.edu/slide-upload) for podium use, have visitors [Submit a Media Release](https://orfe.princeton.edu/media-release) to allow recording, guide graduates through [Travel & Expense](https://orfe.princeton.edu/graduate/travel) procedures, direct othrs to [Watch Live Events](https://orfe.princeton.edu/live), review [Affiliated Event, Program, and Group Sites](https://orfe.princeton.edu/websites) sponsored by or relevant to ORFE, [subscribe to both calendars and mailing lists](https://orfe.princeton.edu/events/subscriptions), control public displays, and help with posting [personal CVs, AI printing quota, departmental funding, and more](https://orfe.princeton.edu/graduate/forms).
+
+[orfe.io](https://orfe.io)
+
+The orfe.io site is a resource for undergraduate and graduate students, as well as research staff with step-by-step directions specific to configuring and understanding management of a software development environment relevant to an ORFE course or project.  It is maintained by ORFE's Manager of Information Technologies via GitHub and accepts contributions in the form of git pull requests.
+
+[Printing for Anyone with Princeton Credentials](https://orfe.princeton.edu/print)
+
+Anyone with Princeton Credentials can use [Web Print](https://orfe.princeton.edu/print) to upload a PDF to the copier.  Retrieve the job from the copier in 108 - Sherrerd Hall.  **TigerPrint** queues are for facutly and staff while the **PawPrint** queues are for undergraduate and graduate students.
+
+[Research Computing](https://researchcomputing.princeton.edu)
+
+Research Computing is a help resource for researchers that provides high performance computing (HPC) how-to’s and maintains and grants access to University research server resources.
+
+[Service Portal](https://www.princeton.edu/service)
+
+The Service Portal is a help resource for Princeton affiliates with request forms and directions relevant to most University operations, be they financial, academic, information technology-related, or otherwise.  It is maintained by service providers and owners coordinated through the Service Management Office (SMO). 
+
+## Related Technical Notes
+
+[Spreadsheet Club](/technical-notes/posts/2025/spreadsheet-club)
+
+Nov. 13, 2025
+
+[How the Graduate Student Out of Office Request Form Works](/technical-notes/posts/2025/how-graduate-student-out-office-request-form-works)
+
+Sept. 24, 2025
+
+[How the Departmental Travel Funding Request Form Works](/technical-notes/posts/2025/departmental-travel-funding-request-form)
+
+Sept. 23, 2025
+
+[Auto-populating Listserv Mailing Lists](/technical-notes/posts/2025/auto-populating-orfe-grads-listserv-list)
+
+June 16, 2025
+
+[Manage an FPO Committee via Zoom](/technical-notes/posts/2025/manage-fpo-committee-zoom)
+
+May 15, 2025
+
+[View All Technical Notes](/technical-notes)
+
+## Timeline
+
+### Filters
+
+Search
+
+Activities and approximate dates linked to when a particular page or resource may be useful.
+
+[Posting of a Congratulations to Graduate Students News Story to the ORFE Web Site](/events/2025/posting-congratulations-graduate-students-news-story-orfe-web-site)
+
+May 28, 2026
+
+[Posting of FPOs to Facebook](/manual-processes/post-news-story)
+
+June 7, 2026
+
+[Prepare Collaborative Draft Version of Graduate Handbook](/graduate/grad-handbook-updates)
+
+July 15, 2026
+
+[Posting of FPOs to Facebook](/manual-processes/post-news-story)
+
+Aug. 2, 2026
+
+[Creating the Beginning of the Year Academic Events Summary](/graduate/event-summary)
+
+Aug. 31, 2026
+
+[Graduate First Year Photos for Web Site](/people-facilities/manage-people-list)
+
+Sept. 14, 2026
+
+[Posting of FPOs to Facebook](/manual-processes/post-news-story)
+
+Oct. 4, 2026
+
+[Posting of FPOs to Facebook](/manual-processes/post-news-story)
+
+Dec. 6, 2026
+
+## Footer menu
+
+  * [Technical Notes](/technical-notes)
+  * [Spreadsheet Club](/ssc)
+  * [Inside Princeton](https://inside.princeton.edu)
+
+
+
+[**Operations Research & Financial Engineering**](https://orfe.princeton.edu/)  
+Sherrerd Hall, Charlton Street, Princeton, NJ 08544  
+[609-258-0100](tel:609-258-0100)

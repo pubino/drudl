@@ -28,6 +28,7 @@ eggs/
 # Output directories
 output_dir/
 downloaded_site/
+output/
 
 # IDE
 .idea/
