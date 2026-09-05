@@ -29,6 +29,54 @@ from selenium.webdriver.support import expected_conditions as EC
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 
+def extra_http_headers():
+    """Headers to send with every request, read from the environment.
+
+    EXTRA_HTTP_HEADERS holds a JSON object of header name/value pairs, matching
+    the convention used by the bsp tooling so one setting serves both:
+
+        EXTRA_HTTP_HEADERS={"x-wdsoit-bot-bypass": "true"}
+
+    DRUDL_BYPASS_HEADER remains supported for a single "Name: value" header.
+    Only header names are printed - values may be secrets.
+    """
+    headers = {}
+
+    raw = os.environ.get("EXTRA_HTTP_HEADERS", "").strip()
+    if raw:
+        try:
+            parsed = json.loads(raw)
+        except ValueError as exc:
+            print(f"Warning: ignoring EXTRA_HTTP_HEADERS, not valid JSON ({exc}).")
+            parsed = None
+
+        if parsed is not None:
+            if isinstance(parsed, dict):
+                for name, value in parsed.items():
+                    if isinstance(value, (str, int, float, bool)):
+                        headers[str(name)] = str(value)
+                    else:
+                        print(f'Warning: ignoring EXTRA_HTTP_HEADERS entry "{name}", '
+                              "value must be a string, number, or boolean.")
+            else:
+                print("Warning: ignoring EXTRA_HTTP_HEADERS, expected a JSON object "
+                      "of header name/value pairs.")
+
+    # Older single-header form, kept working
+    legacy = os.environ.get("DRUDL_BYPASS_HEADER", "").strip()
+    if legacy:
+        if ":" in legacy:
+            name, _, value = legacy.partition(":")
+            headers[name.strip()] = value.strip()
+        else:
+            print("Warning: DRUDL_BYPASS_HEADER must be in 'Header-Name: value' format, ignoring.")
+
+    if headers:
+        print(f"Applying extra HTTP headers: {', '.join(sorted(headers))}")
+
+    return headers
+
+
 class DrupalDownloader:
     def __init__(self, base_url, output_dir="downloaded_site", trim_sections=None):
         self.base_url = base_url.rstrip("/")
@@ -40,14 +88,9 @@ class DrupalDownloader:
             "Accept-Language": "en-US,en;q=0.5",
         })
 
-        # Apply bypass header from environment (e.g. "X-Custom-Header: secret-value")
-        bypass_header = os.environ.get("DRUDL_BYPASS_HEADER")
-        if bypass_header:
-            if ":" in bypass_header:
-                name, _, value = bypass_header.partition(":")
-                self.session.headers[name.strip()] = value.strip()
-            else:
-                print(f"Warning: DRUDL_BYPASS_HEADER must be in 'Header-Name: value' format, ignoring.")
+        # Extra request headers, e.g. a WAF/bot-detection bypass token
+        for name, value in extra_http_headers().items():
+            self.session.headers[name] = value
         self.downloaded_urls = set()
         self.content_urls = []
         self.state_file = self.output_dir / ".drudl_state.json"

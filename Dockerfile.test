@@ -1,0 +1,12 @@
+# Test image: dependencies only, no browser or VNC stack needed.
+# The suite is fully mocked, so it never reaches a real site.
+FROM python:3.14-slim-bookworm
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY conftest.py test_drudl.py drudl ./
+
+CMD ["python", "-m", "pytest", "test_drudl.py", "-v"]

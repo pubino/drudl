@@ -1,15 +1,16 @@
-version: '3.8'
-
 services:
   drudl:
     build: .
     ports:
-      - "6080:6080"
+      # Host port is configurable; the container serves noVNC on 6080.
+      # Prefixed per tool so drudl and bsp can run side by side.
+      - "${DRUDL_NOVNC_PORT:-6080}:6080"
     volumes:
       - ./output:/app/output
       - ./trim_sections.txt:/app/trim_sections.txt:ro
     environment:
       - DISPLAY=:99
-      # - "DRUDL_BYPASS_HEADER=X-My-Header: true"
+      # Extra request headers as a JSON object (same convention as bsp):
+      # - EXTRA_HTTP_HEADERS={"x-wdsoit-bot-bypass": "true"}
     # Create output directory before running: mkdir -p output
     command: ["https://example.com", "-o", "/app/output", "--trim-file", "/app/trim_sections.txt"]
