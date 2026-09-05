@@ -7,7 +7,85 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch, PropertyMock
 
-from drudl import DrupalDownloader
+from drudl import DrupalDownloader, extra_http_headers
+
+
+class TestExtraHttpHeaders(unittest.TestCase):
+    """Header configuration, matching the convention bsp uses."""
+
+    def setUp(self):
+        self._saved = {
+            key: os.environ.pop(key, None)
+            for key in ("EXTRA_HTTP_HEADERS", "DRUDL_BYPASS_HEADER")
+        }
+
+    def tearDown(self):
+        for key, value in self._saved.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+    def test_no_configuration(self):
+        self.assertEqual(extra_http_headers(), {})
+
+    def test_blank_configuration(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = "   "
+        self.assertEqual(extra_http_headers(), {})
+
+    def test_json_object(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"x-wdsoit-bot-bypass": "true"}'
+        self.assertEqual(extra_http_headers(), {"x-wdsoit-bot-bypass": "true"})
+
+    def test_multiple_headers(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"a": "1", "b": "2"}'
+        self.assertEqual(extra_http_headers(), {"a": "1", "b": "2"})
+
+    def test_scalar_values_are_stringified(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"x-flag": true, "x-count": 3}'
+        self.assertEqual(extra_http_headers(), {"x-flag": "True", "x-count": "3"})
+
+    def test_non_scalar_values_dropped(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"good": "1", "bad": {"nested": true}}'
+        self.assertEqual(extra_http_headers(), {"good": "1"})
+
+    def test_invalid_json_ignored(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = "x-header: true"
+        self.assertEqual(extra_http_headers(), {})
+
+    def test_non_object_json_ignored(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '["x-header"]'
+        self.assertEqual(extra_http_headers(), {})
+
+    def test_legacy_single_header_still_works(self):
+        os.environ["DRUDL_BYPASS_HEADER"] = "X-My-Header: true"
+        self.assertEqual(extra_http_headers(), {"X-My-Header": "true"})
+
+    def test_legacy_header_without_colon_ignored(self):
+        os.environ["DRUDL_BYPASS_HEADER"] = "X-My-Header"
+        self.assertEqual(extra_http_headers(), {})
+
+    def test_legacy_value_may_contain_colons(self):
+        os.environ["DRUDL_BYPASS_HEADER"] = "X-Url: https://example.com"
+        self.assertEqual(extra_http_headers(), {"X-Url": "https://example.com"})
+
+    def test_both_forms_combine(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"a": "1"}'
+        os.environ["DRUDL_BYPASS_HEADER"] = "b: 2"
+        self.assertEqual(extra_http_headers(), {"a": "1", "b": "2"})
+
+    def test_headers_reach_the_session(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"x-wdsoit-bot-bypass": "true"}'
+        downloader = DrupalDownloader("https://example.com", output_dir=tempfile.mkdtemp())
+        self.assertEqual(downloader.session.headers["x-wdsoit-bot-bypass"], "true")
+
+    def test_values_are_not_printed(self):
+        os.environ["EXTRA_HTTP_HEADERS"] = '{"x-secret": "super-secret-value"}'
+        with patch("builtins.print") as printed:
+            extra_http_headers()
+        logged = " ".join(str(call) for call in printed.call_args_list)
+        self.assertIn("x-secret", logged)
+        self.assertNotIn("super-secret-value", logged)
 
 
 class TestDrupalDownloader(unittest.TestCase):

@@ -79,18 +79,34 @@ Sidebar
 
 | Variable | Description |
 |----------|-------------|
-| `DRUDL_BYPASS_HEADER` | Custom HTTP header to include with all requests, in `Header-Name: value` format. Useful for Cloudflare or WAF bypass tokens. |
+| `EXTRA_HTTP_HEADERS` | JSON object of header name/value pairs sent with every request. Useful for Cloudflare or WAF bypass tokens. |
+| `DRUDL_NOVNC_PORT` | Host port for the Docker noVNC desktop (default: `6080`) |
+| `DRUDL_BYPASS_HEADER` | Older single-header form, `Header-Name: value`. Still supported. |
 
 ```bash
 # CLI
-export DRUDL_BYPASS_HEADER="X-My-Header: true"
+export EXTRA_HTTP_HEADERS='{"x-wdsoit-bot-bypass": "true"}'
 python drudl https://example.com -o output
 
 # Docker
-docker run -e "DRUDL_BYPASS_HEADER=X-My-Header: true" -p 6080:6080 ...
+docker run -e 'EXTRA_HTTP_HEADERS={"x-wdsoit-bot-bypass": "true"}' -p 6080:6080 ...
 ```
 
 For docker-compose, add the variable under `environment` in your `docker-compose.yml`.
+
+Invalid JSON is ignored with a warning rather than failing the run, and only
+header *names* are printed since values may be secrets. Both forms may be set
+at once; they merge.
+
+### Shared conventions with bsp
+
+`EXTRA_HTTP_HEADERS` uses the same name and JSON shape as
+[bsp](https://github.com/pu-shd/bsp), so one setting configures the WAF bypass
+for both tools on the same site.
+
+Port variables stay tool-prefixed on purpose — `DRUDL_NOVNC_PORT` here,
+`BSP_NOVNC_PORT` there — so the two can run side by side without their noVNC
+desktops colliding.
 
 ## How It Works
 
@@ -117,9 +133,19 @@ The authenticated user must have permission to access `/admin/content`. This typ
 ## Running Tests
 
 ```bash
+# Local
+python3 -m venv venv
 source venv/bin/activate
+pip install -r requirements.txt
 python -m pytest test_drudl.py -v
+
+# Containerized
+docker-compose -f docker-compose.test.yml run --rm test
 ```
+
+`conftest.py` loads the extensionless `drudl` script as an importable module —
+the CLI is invoked as `python drudl`, so it carries no `.py` extension and a
+plain `from drudl import ...` cannot find it.
 
 ### Docker
 
@@ -141,6 +167,7 @@ The Docker version includes a noVNC desktop for interactive CAS authentication.
    ```
 
 4. Open http://localhost:6080 in your browser to view the Chromium window
+   (or whichever port `DRUDL_NOVNC_PORT` is set to)
 
 5. Complete CAS authentication when prompted
 
